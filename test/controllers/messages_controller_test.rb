@@ -1,11 +1,11 @@
 require 'test_helper'
 
 class MessagesControllerTest < ActionController::TestCase
-  #test "POST #create" do
-  #  assert_difference('Message.count') do
-  #    post :create, conversation_id: conversations(:one), params: { message: { body: 'Some text' } }, format: :json
-  #  end
-  #end
+  test "POST #create" do
+    assert_difference('Message.count') do
+      post :create, conversation_id: conversations(:one), params: { message: { body: 'Some text' } }, format: :json
+    end
+  end
 
   test "GET #index" do
     22.times { conversations(:one).messages.create(body: "BOO!")}

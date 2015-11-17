@@ -1,13 +1,19 @@
 class ConversationsController < ApplicationController
   respond_to :json
 
+  def index
+    conversation=Conversation.all
+    render json: conversation
+  end
+
   def create
-    conversation = Conversation.new(conversation_params)
-    if conversation.save
-      render json: conversation, status: 201
+    if Conversation.between(params[:sender_id],params[:recipient_id]).present?
+      @conversation = Conversation.between(params[:sender_id],params[:recipient_id]).first
     else
-      render json: { errors: conversation.errors }, status:422
+      @conversation = Conversation.create!(conversation_params)
     end
+
+    render json: { conversation_id: @conversation.id }
   end
 
   private

@@ -14,7 +14,7 @@ class MessagesController < ApplicationController
     conversation = Conversation.find(params[:conversation_id])
     @message = conversation.messages.create(message_params)
     @message.user_id = current_user.id
-    @message.save
+    @message.save!
 
     render json: @message
   end
