@@ -7,13 +7,13 @@ class ConversationsController < ApplicationController
   end
 
   def create
-    if Conversation.between(params[:sender_id],params[:recipient_id]).present?
-      @conversation = Conversation.between(params[:sender_id],params[:recipient_id]).first
-    else
-      @conversation = Conversation.create!(conversation_params)
-    end
+    @conversation=Conversation.conversation_exists(conversation_params)
 
-    render json: { conversation_id: @conversation.id }
+    if @conversation.save
+      render json: @conversation.id, status: 201
+    else
+      render json: { errors: conversation.errors }, status: 422
+    end
   end
 
   private

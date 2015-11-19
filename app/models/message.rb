@@ -3,4 +3,6 @@ class Message < ActiveRecord::Base
 
   belongs_to :conversation
   belongs_to :user
+
+  #scope :unread, -> { where("read_at==NULL") }
 end
