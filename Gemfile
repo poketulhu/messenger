@@ -19,4 +19,4 @@ end
 
 gem 'kaminari'
 
-
+gem 'bcrypt-ruby'
