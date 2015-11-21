@@ -1,3 +1,4 @@
+#bcrypt-ruby
 =begin
 users=[
   ["Sue L. Cole", 'd0SJuP'],
@@ -28,3 +29,8 @@ Message.create(body: "How are you?", conversation_id: 2, user_id: 3)
 Message.create(body: "Hi", conversation_id: 2, user_id: 4)
 =end
 
+names=["Sue L. Cole", "William A. Adams", "Joann K. Washington", "Elizabeth J. Rayford", "Marc L. Taylor"]
+
+names.each do |name|
+  User.create(name: name)
+end

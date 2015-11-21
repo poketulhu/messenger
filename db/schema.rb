@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151119212114) do
+ActiveRecord::Schema.define(version: 20151120072855) do
 
   create_table "conversations", force: true do |t|
     t.datetime "created_at"
@@ -35,7 +35,7 @@ ActiveRecord::Schema.define(version: 20151119212114) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "password_digest"
+    t.string   "auth_token"
   end
 
 end

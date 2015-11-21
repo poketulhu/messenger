@@ -1,5 +1,6 @@
 Messengerapi::Application.routes.draw do
   resources :users, :only => [:index]
+  resources :sessions, :only => [:create, :destroy]
 
   resources :conversations, :only => [:create, :index] do
     scope module: :conversations do

@@ -1,18 +1,19 @@
 class ConversationsController < ApplicationController
+  before_action :authenticate
   respond_to :json
 
   def index
-    conversation=Conversation.all
-    render json: conversation
+    conversations = @current_user.conversations
+
+    render json: conversations
   end
 
   def create
-    @conversation=Conversation.conversation_exists(conversation_params)
-
+    @conversation = Conversation.conversation_exists(conversation_params)
     if @conversation.save
-      render json: @conversation.id, status: 201
+      render json: @conversation.id, status: :created
     else
-      render json: { errors: conversation.errors }, status: 422
+      render json: { errors: conversation.errors }, status: :unprocessable_entity
     end
   end
 

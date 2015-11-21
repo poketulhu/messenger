@@ -1,6 +1,7 @@
 class Conversations::MessagesController < ApplicationController
   respond_to :json
   before_action :find_conversation, :only => [:index, :create]
+  before_action :authenticate
 
   def index
     messages=@conversation.messages.page(params[:page]).per(params[:per_page])
@@ -12,11 +13,11 @@ class Conversations::MessagesController < ApplicationController
 
   def create
     @message = @conversation.messages.build(message_params)
-    @message.user_id = current_user.id
+    @message.user_id = @current_user.id
     if @message.save
-      render json: @message, status: 201
+      render json: @message, status: :created
     else
-      render json: { errors: @message.errors }, status: 422
+      render json: { errors: @message.errors }, status: :unprocessable_entity
     end
   end
 
@@ -32,4 +33,5 @@ class Conversations::MessagesController < ApplicationController
   def find_conversation
     @conversation = Conversation.find(params[:conversation_id])
   end
+
 end
