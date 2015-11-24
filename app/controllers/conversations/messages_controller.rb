@@ -14,7 +14,7 @@ class Conversations::MessagesController < ApplicationController
 
   def create
     @message = @conversation.messages.build(message_params)
-    @message.user_id = @current_user.id
+    @message.user_id = current_user.id
     if @message.save
       render json: @message, status: :created
     else
@@ -32,7 +32,7 @@ class Conversations::MessagesController < ApplicationController
     end
 
     def find_conversation
-      @conversation = Conversation.user_conversations(@current_user).find(params[:conversation_id])
+      @conversation = Conversation.user_conversations(current_user).find(params[:conversation_id])
     end
 
     def mark_as_read(messages)
