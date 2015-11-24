@@ -20,3 +20,8 @@ end
 gem 'kaminari'
 
 gem 'bcrypt-ruby'
+
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
+
+gem 'redis'

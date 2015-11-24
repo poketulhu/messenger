@@ -5,6 +5,7 @@ class Conversations::MessagesController < ApplicationController
 
   def index
     messages=@conversation.messages.page(params[:page]).per(params[:per_page])
+    mark_as_read(messages)
     render json: messages, meta: { pagination:
                                    { per_page: params[:per_page],
                                      total_pages: messages.total_pages,
@@ -26,12 +27,20 @@ class Conversations::MessagesController < ApplicationController
   end
 
   private
-  def message_params
-    params.require(:message).permit(:body)
-  end
+    def message_params
+      params.require(:message).permit(:body)
+    end
 
-  def find_conversation
-    @conversation = Conversation.find(params[:conversation_id])
-  end
+    def find_conversation
+      @conversation = Conversation.user_conversations(@current_user).find(params[:conversation_id])
+    end
 
+    def mark_as_read(messages)
+      @conversation.messages.each do |message|
+        message.read_at = Time.now
+        message.save
+        @conversation.unread = nil
+        @conversation.save
+      end
+    end
 end

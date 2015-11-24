@@ -7,10 +7,11 @@ class User < ActiveRecord::Base
   has_many :conversations, :foreign_key => :sender_id
   has_many :messages
 
-  #has_secure_password
-  #validates :password, length: { minimum: 6 }
-
   before_create :set_auth_token
+
+  def online?
+    $redis_onlines.exists( self.id )
+  end
 
   private
     def set_auth_token

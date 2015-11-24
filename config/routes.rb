@@ -7,4 +7,6 @@ Messengerapi::Application.routes.draw do
       resources :messages, :only => [:create, :index]
     end
   end
+
+  get 'search', to: 'search#search'
 end

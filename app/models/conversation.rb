@@ -11,6 +11,10 @@ class Conversation < ActiveRecord::Base
           sender_id,recipient_id, recipient_id, sender_id)
   end
 
+  scope :user_conversations, -> (user) do
+    where("conversations.sender_id =? OR conversations.recipient_id =?",user.id,user.id)
+  end
+
   def self.conversation_exists(params={})
     if self.between(params[:sender_id],params[:recipient_id]).present?
       conversation = self.between(params[:sender_id],params[:recipient_id]).first

@@ -3,8 +3,8 @@ class ConversationsController < ApplicationController
   respond_to :json
 
   def index
-    conversations = @current_user.conversations
-
+    conversations = Conversation.user_conversations(@current_user)
+    unread_messages_count(conversations)
     render json: conversations
   end
 
@@ -20,5 +20,12 @@ class ConversationsController < ApplicationController
   private
     def conversation_params
       params.permit(:sender_id, :recipient_id)
+    end
+
+    def unread_messages_count(conversations)
+      conversations.each do |conversation|
+        conversation.unread = conversation.messages.where("read_at IS NULL AND user_id!=?", @current_user.id).count
+        conversation.save
+      end
     end
 end
