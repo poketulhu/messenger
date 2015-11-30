@@ -1,10 +1,10 @@
-class Conversations::MessagesController < ApplicationController
+class Conversations::MessagesController < ConversationsController
   respond_to :json
-  before_action :find_conversation, :only => [:index, :create]
+  before_action :find_conversation, :only => [:index, :create, :update, :destroy]
   before_action :authenticate
 
   def index
-    messages=@conversation.messages.page(params[:page]).per(params[:per_page])
+    messages = @conversation.messages.deleted.page(params[:page]).per(params[:per_page])
     mark_as_read(messages)
     render json: messages, meta: { pagination:
                                    { per_page: params[:per_page],
@@ -22,8 +22,31 @@ class Conversations::MessagesController < ApplicationController
     end
   end
 
-  def show
-    @message = Message.find params[:id]
+  def update
+    @message = @conversation.messages.find_by_id(params[:id])
+    if @message.update(message_params)
+      render json: @message, status: 200
+    else
+      render json: { errors: product.errors }
+    end
+  end
+
+  def destroy
+    @message = @conversation.messages.find_by_id(params[:id])
+    @message.mark_as_deleted(current_user)
+    @message.save
+    render json: current_user.messages.deleted, status: :ok
+  end
+
+  def search
+    if params[:q]
+      @messages = MessagesIndex.query(query_string: {query: params[:q] } ).load
+      p @messages
+      render json: @messages, status: :ok
+    else
+      @messages = []
+      render json:{ errors: "Messages not found" }, status: :unprocessable_entity
+    end
   end
 
   private
@@ -39,7 +62,7 @@ class Conversations::MessagesController < ApplicationController
       @conversation.messages.each do |message|
         message.read_at = Time.now
         message.save
-        @conversation.unread = nil
+        @conversation.unread = 0
         @conversation.save
       end
     end

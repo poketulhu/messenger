@@ -3,8 +3,6 @@ class UserSerializer < ActiveModel::Serializer
   attributes :name, :is_online
 
   def is_online
-    if object.online?
-      'online'
-    end
+    object.online?
   end
 end

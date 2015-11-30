@@ -1,24 +1,16 @@
 require 'test_helper'
 
 class Conversations::MessagesControllerTest < ActionController::TestCase
-  setup do
-    @sender = User.create(name: 'Sender')
-    @conversation = Conversation.create(sender_id: @sender.id, recipient_id: 2)
-    @auth_header = "Token token=#{@sender.auth_token}"
-    @token = ActionController::HttpAuthentication::Token.encode_credentials(@sender.auth_token)
-  end
-
   test "POST #create" do
-    request.headers['Authorization'] = @token
+    log_in
     assert_difference('Message.count') do
-      post :create, conversation_id: Conversation.first, params: { message: { body: 'Some text' } }, format: :json
+      post :create, conversation_id: @conversation.id, message: { body: 'Some text' }, format: :json
     end
-
   end
 
   test "GET #index" do
-    request.headers['Authorization'] = @token
-    get :index, conversation_id: conversations(:one), format: :json
+    log_in
+    get :index, conversation_id: @conversation.id, format: :json
     assert_response :success
     body = JSON.parse(response.body)
     assert_includes body, "messages"
@@ -28,4 +20,24 @@ class Conversations::MessagesControllerTest < ActionController::TestCase
     assert_includes body["meta"]["pagination"], "total_pages"
     assert_includes body["meta"]["pagination"], "total_objects"
   end
+
+  test "PATCH/PUT #update" do
+    log_in
+    patch :update, conversation_id: @conversation, id: @message.id, message: { body: "Some new text" }, format: :json
+    assert_response :success
+  end
+
+  test "DELETE #destroy" do
+    log_in
+    delete :destroy, { conversation_id: @conversation.id, id: @message.id }, format: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal [], body["messages"]
+  end
+
+  # test "#search" do
+  #   log_in
+  #   get :search, user_id: @sender.id, q: "text", format: :json
+  #   assert_response :success
+  # end
 end
