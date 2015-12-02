@@ -1,6 +1,6 @@
 class Conversations::MessagesController < ConversationsController
   respond_to :json
-  before_action :find_conversation, :only => [:index, :create, :update, :destroy]
+  before_action :find_conversation
   before_action :authenticate
 
   def index
@@ -41,8 +41,9 @@ class Conversations::MessagesController < ConversationsController
   def search
     MessagesIndex.import
     id = params[:conversation_id]
-    if params[:q] && params[:conversation_id]
-      @messages = MessagesIndex.query(match: {body: params[:q]}).filter{ conversation_id == id }.load.to_a
+    if params[:q]
+      @messages = MessagesIndex.query(match: query_type(params[:q])).filter{ conversation_id == id }.load
+      #query_type defined in messages_helper.rb
       render json: @messages, status: :ok
     else
       @messages = []

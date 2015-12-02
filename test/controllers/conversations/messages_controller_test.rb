@@ -38,11 +38,15 @@ class Conversations::MessagesControllerTest < ActionController::TestCase
 
   test "GET #search" do
     log_in
-    get :search, conversation_id: @conversation.id, q: "Some", format: :json
+    get :search, conversation_id: @conversation.id, q: "some", format: :json
     assert_response :success
     body = JSON.parse(response.body)
-    p body
     assert_equal body["messages"][0]["body"].downcase, "some text"
     assert_not_includes body["messages"], Message.find_by(body: "Some new text")
+
+    get :search, conversation_id: @conversation.id, q: @message.created_at.to_date, format: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal body["messages"][0]["body"], @message.body
   end
 end
