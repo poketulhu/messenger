@@ -19,6 +19,7 @@ class Conversations::MessagesControllerTest < ActionController::TestCase
     assert_includes body["meta"]["pagination"], "per_page"
     assert_includes body["meta"]["pagination"], "total_pages"
     assert_includes body["meta"]["pagination"], "total_objects"
+    assert_not_equal nil, @conversation.messages.first.read_at
   end
 
   test "PATCH/PUT #update" do
@@ -35,9 +36,13 @@ class Conversations::MessagesControllerTest < ActionController::TestCase
     assert_equal [], body["messages"]
   end
 
-  # test "#search" do
-  #   log_in
-  #   get :search, user_id: @sender.id, q: "text", format: :json
-  #   assert_response :success
-  # end
+  test "GET #search" do
+    log_in
+    get :search, conversation_id: @conversation.id, q: "Some", format: :json
+    assert_response :success
+    body = JSON.parse(response.body)
+    p body
+    assert_equal body["messages"][0]["body"].downcase, "some text"
+    assert_not_includes body["messages"], Message.find_by(body: "Some new text")
+  end
 end

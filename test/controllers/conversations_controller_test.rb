@@ -11,11 +11,12 @@ class ConversationsControllerTest < ActionController::TestCase
     get :index, { format: :json }
     assert_response :success
     body = JSON.parse(response.body)
-    assert_includes body, "conversations"
-    assert_includes body["conversations"], {"participants_names"=>[@sender.name, @recipient.name],
-                                            "unread_count"=>@conversation.unread}
-    assert_not_includes body["conversations"], {"participants_names"=>[@recipient.name, @another_user.name],
-                                                "unread_count"=>@another_conversation.unread}
+    assert_equal body["conversations"][1]["participants_names"], [@sender.name, @recipient.name]
+    assert_not_includes body["conversations"][1]["participants_names"], [@recipient.name, @another_user.name]
+    assert_equal [{"participants_names"=>[@another_user.name, @sender.name],
+                   "unread_count"=>0},
+                  {"participants_names"=>[@sender.name, @recipient.name],
+                   "unread_count"=>1}], body["conversations"]
   end
 
   test "POST #create" do

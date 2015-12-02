@@ -39,9 +39,10 @@ class Conversations::MessagesController < ConversationsController
   end
 
   def search
-    if params[:q]
-      @messages = MessagesIndex.query(query_string: {query: params[:q] } ).load
-      p @messages
+    MessagesIndex.import
+    id = params[:conversation_id]
+    if params[:q] && params[:conversation_id]
+      @messages = MessagesIndex.query(match: {body: params[:q]}).filter{ conversation_id == id }.load.to_a
       render json: @messages, status: :ok
     else
       @messages = []
@@ -60,8 +61,7 @@ class Conversations::MessagesController < ConversationsController
 
     def mark_as_read(messages)
       @conversation.messages.each do |message|
-        message.read_at = Time.now
-        message.save
+        message.touch(:read_at)
         @conversation.unread = 0
         @conversation.save
       end

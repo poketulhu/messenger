@@ -5,7 +5,7 @@ class ConversationsController < ApplicationController
   def index
     conversations = Conversation.user_conversations(current_user)
     unread_messages_count(conversations)
-    render json: conversations#.joins(:messages).order(messages.count desc)
+    render json: conversations.order(updated_at: :desc)
   end
 
   def create
