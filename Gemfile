@@ -19,3 +19,5 @@ gem 'kaminari'
 gem 'chewy'
 
 gem 'redis'
+
+gem 'metainspector'

@@ -44,7 +44,10 @@ class Conversations::MessagesController < ConversationsController
     if params[:q]
       @messages = MessagesIndex.query(match: query_type(params[:q])).filter{ conversation_id == id }.load
       #query_type defined in messages_helper.rb
-      render json: @messages, status: :ok
+      render json: @messages, status: :ok, meta: { pagination:
+                                                 { per_page: params[:per_page],
+                                                   total_pages: @messages.total_pages,
+                                                   total_objects: @messages.total_count } }
     else
       @messages = []
       render json:{ errors: "Messages not found" }, status: :unprocessable_entity

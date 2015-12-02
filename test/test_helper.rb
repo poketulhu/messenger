@@ -24,6 +24,8 @@ class ActiveSupport::TestCase
     @token = ActionController::HttpAuthentication::Token.encode_credentials(@sender.auth_token)
     @message = Message.create(body: "Some text", conversation_id: @conversation.id, user_id: @sender.id)
     @new_message = Message.create(body: "Some new text", conversation_id: 2, user_id: 2)
+    @message_with_link = Message.create(body: "Микс на саундклауде https://soundcloud.com/bonobo'\n'+ http://pikabu.ru",
+                                        conversation_id: @conversation.id, user_id: @sender.id)
   end
 
   def log_in
