@@ -14,6 +14,10 @@ class Conversations::MessagesController < ConversationsController
 
   def create
     @message = @conversation.messages.build(message_params)
+    links = URI.extract(@message.body)
+    if links.any?
+      @message.links_processing(links)
+    end
     @message.user_id = current_user.id
     if @message.save
       render json: @message, status: :created
@@ -56,7 +60,7 @@ class Conversations::MessagesController < ConversationsController
 
   private
     def message_params
-      params.require(:message).permit(:body)
+      params.require(:message).permit(:body, :image, :video)
     end
 
     def find_conversation

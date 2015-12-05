@@ -21,3 +21,6 @@ gem 'chewy'
 gem 'redis'
 
 gem 'metainspector'
+
+gem 'paperclip'
+gem 'paperclip-av-transcoder'

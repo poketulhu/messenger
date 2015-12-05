@@ -1,15 +1,24 @@
 require "uri"
 
 class MessageSerializer < ActiveModel::Serializer
-  attributes :message_body, :created_at
+  attributes :body, :page_information, :image, :video, :created_at
 
-  def message_body
-    links = URI.extract(object.body)
-    if links.any?
-      m = MetaInspector.new(links.first)
-      {body: object.body, link: [m.title, m.description, m.images.best]}
+  def page_information
+    if URI.extract(object.body).any?
+      m = MetaInspector.new(URI.extract(object.body).first)
+      if m.content_type["text"]
+        [m.title, m.description, m.images.best]
+      end
     else
-      object.body
+      nil
     end
+  end
+
+  def image
+    object.image unless object.image_file_name?
+  end
+
+  def videos
+    object.video unless object.video_file_name?
   end
 end
